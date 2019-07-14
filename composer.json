@@ -1,0 +1,35 @@
+{
+    "name": "michielgerritsen/laravel-nova-email-on-event",
+    "description": "Allow users to send emails when an event occurs.",
+    "keywords": [
+        "laravel",
+        "nova"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7|6.2|^7.0|^8.0",
+        "orchestra/testbench": "^3.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "MichielGerritsen\\LaravelNovaEmailOnEvent\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MichielGerritsen\\LaravelNovaEmailOnEvent\\Test\\": "Test/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MichielGerritsen\\LaravelNovaEmailOnEvent\\MailOnEventServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
