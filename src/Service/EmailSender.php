@@ -39,10 +39,12 @@ class EmailSender
     public function send(EmailEvent $email, $event)
     {
         $content = $this->emailContent->prepare($email->message, $event);
-        $subject = $this->emailContent->prepare($email->subject, $event);
 
-        Mail::html($content, function (Message $message) use ($email, $subject) {
-            $message->to($email->to);
+        Mail::html($content, function (Message $message) use ($email, $event) {
+            $to = $this->emailContent->prepare($email->to, $event);
+            $subject = $this->emailContent->prepare($email->subject, $event);
+
+            $message->to($to);
             $message->from($email->from);
             $message->subject($subject);
         });
