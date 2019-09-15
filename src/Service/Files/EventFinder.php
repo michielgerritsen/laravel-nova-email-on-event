@@ -42,9 +42,7 @@ class EventFinder
 
     public function find()
     {
-        foreach (app_path('Events') as $path) {
-            $this->findEventsInPath($path);
-        }
+        $this->findEventsInPath(app_path('Events'));
 
         return $this->files;
     }
