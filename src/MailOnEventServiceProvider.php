@@ -18,6 +18,8 @@ class MailOnEventServiceProvider extends ServiceProvider
     public function boot()
     {
         Nova::serving(function (ServingNova $event) {
+            Nova::script('email-on-event', __DIR__ . '/../dist/js/boot.js');
+
             Nova::resources([
                 EmailEventsResource::class,
             ]);

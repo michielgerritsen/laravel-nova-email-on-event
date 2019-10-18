@@ -26,6 +26,7 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
 use MichielGerritsen\LaravelNovaEmailOnEvent\Models\EmailEvent;
+use MichielGerritsen\LaravelNovaEmailOnEvent\Nova\Fields\EmailField;
 use MichielGerritsen\LaravelNovaEmailOnEvent\Service\Files\ClassNameFinder;
 use MichielGerritsen\LaravelNovaEmailOnEvent\Service\Files\EventFinder;
 
@@ -48,8 +49,10 @@ class EmailEventsResource extends \Laravel\Nova\Resource
     {
         return [
             Select::make('Event')->options(app(EventFinder::class)->find()),
-            Text::make('To'),
             Text::make('From'),
+            EmailField::make('To'),
+            EmailField::make('Cc')->hideFromIndex(),
+            EmailField::make('Bcc')->hideFromIndex(),
             Text::make('Subject'),
             Trix::make('Message')->hideFromIndex(),
         ];

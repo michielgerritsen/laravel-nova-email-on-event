@@ -30,6 +30,16 @@ class EmailSender
      */
     private $emailContent;
 
+    /**
+     * @var EmailEvent
+     */
+    private $email;
+
+    /**
+     * @var Object
+     */
+    private $event;
+
     public function __construct(
         EmailContent $emailContent
     ) {
@@ -38,15 +48,46 @@ class EmailSender
 
     public function send(EmailEvent $email, $event)
     {
-        $content = $this->emailContent->prepare($email->message, $event);
+        $this->email = $email;
+        $this->event = $event;
 
-        Mail::html($content, function (Message $message) use ($email, $event) {
-            $to = $this->emailContent->prepare($email->to, $event);
-            $subject = $this->emailContent->prepare($email->subject, $event);
+        $content = $this->emailContent->prepare($this->email->message, $this->event);
+        Mail::html($content, [$this, 'composeMessage']);
+    }
 
-            $message->to($to);
-            $message->from($email->from);
-            $message->subject($subject);
+    public function composeMessage(Message $message)
+    {
+        $this->addRecipients($message, 'to', $this->event);
+        $this->addRecipients($message, 'cc', $this->event);
+        $this->addRecipients($message, 'bcc', $this->event);
+
+        $subject = $this->emailContent->prepare($this->email->subject, $this->event);
+        $from = $this->emailContent->prepare($this->email->from, $this->event);
+
+        $message->from($this->email->from);
+        $message->subject($subject);
+    }
+
+    private function addRecipients(Message $message, string $recipientType, $event)
+    {
+        if (!in_array($recipientType, ['to', 'cc', 'bcc'])) {
+            throw new \Exception(sprintf('Unknown recipient type: %1', $recipientType));
+        }
+
+        $recipients = json_decode($this->email->$recipientType, JSON_OBJECT_AS_ARRAY);
+
+        $recipients = array_map(function ($recipient) {
+            return $this->emailContent->prepare($recipient, $this->event);
+        }, $recipients);
+
+        $recipients = array_filter($recipients, function ($recipient) {
+            return filter_var($recipient, FILTER_VALIDATE_EMAIL);
         });
+
+        if (!$recipients) {
+            return;
+        }
+
+        $message->{'set' . ucfirst($recipientType)}($recipients);
     }
 }

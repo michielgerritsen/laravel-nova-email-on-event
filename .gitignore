@@ -2,3 +2,4 @@
 package-lock.json
 composer.lock
 .phpunit.result.cache
+node_modules
