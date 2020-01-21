@@ -30,6 +30,7 @@ class EmailContentTest extends TestCase
         return [
             'non-object' => ['This is a {$type} for John Doe: Hello', 'This is a message for John Doe: Hello'],
             'object' => ['This is a message for {$user->name}: Hello', 'This is a message for John Doe: Hello'],
+            'html encoded' => ['This is a message for {$user-&gt;name}: Hello', 'This is a message for John Doe: Hello'],
             'nested-object' => ['Please send this to {$user->address->street}', 'Please send this to ExampleStreet'],
         ];
     }
@@ -53,5 +54,22 @@ class EmailContentTest extends TestCase
         $result = $instance->prepare($input, $event);
 
         $this->assertEquals($output, $result);
+    }
+
+    public function testAllowsArrayValues()
+    {
+        $user = new \stdClass();
+        $user->name = 'John Doe';
+        $user->address = ['street' => 'ExampleStreet'];
+
+        $event = new FlexibleEvent;
+        $event->user = $user;
+        $event->type = 'message';
+
+        /** @var EmailContent $instance */
+        $instance = app(EmailContent::class);
+        $result = $instance->prepare('Please send this to {$user->address->street}', $event);
+
+        $this->assertEquals('Please send this to ExampleStreet', $result);
     }
 }

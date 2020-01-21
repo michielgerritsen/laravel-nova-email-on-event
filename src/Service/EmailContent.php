@@ -36,12 +36,27 @@ class EmailContent
 
     private function replaceVariable($match)
     {
-        $parts = explode('->', $match[1]);
+        $parts = explode('->', str_replace('-&gt;', '->', $match[1]));
 
         $first = substr(Arr::first($parts), 1);
+
+        if (!isset($this->variables[$first])) {
+            return null;
+        }
+
         $value = $this->variables[$first];
         foreach (array_splice($parts, 1) as $part) {
-            $value = $value->$part;
+            if (is_array($value) && array_key_exists($part, $value)) {
+                $value = $value[$part];
+                continue;
+            }
+
+            if (is_object($value) && property_exists($value, $part)) {
+                $value = $value->$part;
+                continue;
+            }
+
+            break;
         }
 
         return $value;
