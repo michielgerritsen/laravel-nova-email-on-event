@@ -48,13 +48,13 @@ class EmailEventsResource extends \Laravel\Nova\Resource
     public function fields(Request $request)
     {
         return [
-            Select::make('Event')->options(app(EventFinder::class)->find()),
-            Text::make('From'),
-            EmailField::make('To'),
+            Select::make('Event')->options(app(EventFinder::class)->find())->required(),
+            Text::make('From')->required(),
+            EmailField::make('To')->required(),
             EmailField::make('Cc')->hideFromIndex(),
             EmailField::make('Bcc')->hideFromIndex(),
-            Text::make('Subject'),
-            Trix::make('Message')->hideFromIndex(),
+            Text::make('Subject')->required(),
+            Trix::make('Message')->hideFromIndex()->required(),
         ];
     }
 
