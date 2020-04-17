@@ -18,6 +18,7 @@
 
 namespace MichielGerritsen\LaravelNovaEmailOnEvent\Service;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 class EmailContent
@@ -51,7 +52,7 @@ class EmailContent
                 continue;
             }
 
-            if (is_object($value) && property_exists($value, $part)) {
+            if ((is_object($value) && property_exists($value, $part)) || ($value instanceof Model)) {
                 $value = $value->$part;
                 continue;
             }
