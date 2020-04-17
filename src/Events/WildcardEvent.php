@@ -18,6 +18,7 @@
 
 namespace MichielGerritsen\LaravelNovaEmailOnEvent\Events;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use MichielGerritsen\LaravelNovaEmailOnEvent\Models\EmailEvent;
 use MichielGerritsen\LaravelNovaEmailOnEvent\Service\EmailSender;
@@ -64,7 +65,7 @@ class WildcardEvent
             return null;
         }
 
-        $mails = \Cache::remember('email-events.events.' . $eventName, 60 * 60, function () use ($eventName) {
+        $mails = Cache::remember('email-events.events.' . $eventName, 60 * 60, function () use ($eventName) {
             return EmailEvent::where('event', $eventName)->get();
         });
 

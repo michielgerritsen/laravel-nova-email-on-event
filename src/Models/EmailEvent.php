@@ -34,9 +34,9 @@ class EmailEvent extends Model
     {
         parent::boot();
 
-        static::saving( function ($model) {
+        static::saving( function (EmailEvent $model) {
             Cache::forget('email-events.event-list');
-            Cache::forget('email-events.events.*');
+            Cache::forget('email-events.events.' . $model->event);
         });
     }
 
